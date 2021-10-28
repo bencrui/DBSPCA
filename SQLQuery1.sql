@@ -17,4 +17,4 @@ WHERE animalId = 6;
 
 INSERT INTO tblFeed VALUES (2, '10/26/2021', 22);
 
-SELECT tblFeed.Consumption FROM tblFeed INNER JOIN tblAnimals ON tblFeed.FeedId = tblAnimals.animalId WHERE tblAnimals.animalId = 2;
+SELECT tblFeed.Consumption FROM tblFeed INNER JOIN tblAnimals ON tblFeed.AnimalId = tblAnimals.animalId WHERE tblAnimals.animalId = 1;

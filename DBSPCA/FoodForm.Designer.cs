@@ -29,10 +29,10 @@ namespace DBSPCA
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title5 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.lblDay7 = new System.Windows.Forms.Label();
             this.lblDay2 = new System.Windows.Forms.Label();
             this.lblDay3 = new System.Windows.Forms.Label();
@@ -50,6 +50,7 @@ namespace DBSPCA
             this.Day1Nud = new System.Windows.Forms.NumericUpDown();
             this.miniChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.btnAdd = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Day7Nud)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Day6Nud)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Day5Nud)).BeginInit();
@@ -233,21 +234,21 @@ namespace DBSPCA
             // 
             // miniChart
             // 
-            chartArea1.Name = "ChartArea1";
-            this.miniChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.miniChart.Legends.Add(legend1);
+            chartArea5.Name = "ChartArea1";
+            this.miniChart.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.miniChart.Legends.Add(legend5);
             this.miniChart.Location = new System.Drawing.Point(432, 109);
             this.miniChart.Name = "miniChart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Legend = "Legend1";
-            series1.Name = "Food";
-            this.miniChart.Series.Add(series1);
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.Legend = "Legend1";
+            series5.Name = "Food";
+            this.miniChart.Series.Add(series5);
             this.miniChart.Size = new System.Drawing.Size(323, 253);
             this.miniChart.TabIndex = 27;
-            title1.Name = "Food";
-            this.miniChart.Titles.Add(title1);
+            title5.Name = "Food";
+            this.miniChart.Titles.Add(title5);
             // 
             // btnAdd
             // 
@@ -260,11 +261,23 @@ namespace DBSPCA
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Bold);
+            this.button1.Location = new System.Drawing.Point(657, 370);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(98, 23);
+            this.button1.TabIndex = 30;
+            this.button1.Text = "Exit";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // FoodForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.miniChart);
             this.Controls.Add(this.Day7Nud);
@@ -316,5 +329,6 @@ namespace DBSPCA
         private System.Windows.Forms.NumericUpDown Day1Nud;
         private System.Windows.Forms.DataVisualization.Charting.Chart miniChart;
         private System.Windows.Forms.Button btnAdd;
+        private System.Windows.Forms.Button button1;
     }
 }

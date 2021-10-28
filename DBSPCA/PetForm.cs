@@ -26,8 +26,6 @@ namespace DBSPCA
 
         private void PopulateConnection()
         {
-            Console.WriteLine(dtpBirth.Value.ToString("MM/dd/yyyy"));
-
             using (connection = new SqlConnection(connectionString))
             using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblAnimals", connection))
             {
@@ -80,14 +78,14 @@ namespace DBSPCA
         {
             // go to food form page
             this.Hide();
-            FoodForm window = new FoodForm(petList.GetItemText(petList.SelectedItem), petList.SelectedIndex+1); // create and run the full graph
+            FoodForm window = new FoodForm(petList.GetItemText(petList.SelectedItem), GetId()); // create and run the full graph
             window.FormClosed += (s, args) => this.Close();
             window.Show();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int changeNum = GetId("animalId");
+            int changeNum = GetId();
 
             using (connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand("UPDATE TblAnimals SET Name = @petName WHERE animalId = @Id", connection))
@@ -103,7 +101,7 @@ namespace DBSPCA
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            int deathNum = GetId("animalId");
+            int deathNum = GetId();
 
             using (connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand("DELETE FROM tblAnimals WHERE[animalId] = @Id;", connection))
@@ -117,7 +115,7 @@ namespace DBSPCA
             PopulateConnection();
         }
 
-        private int GetId(string row)
+        private int GetId()
         {
             int num = 0;
 
@@ -136,7 +134,7 @@ namespace DBSPCA
 
         private void petList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int num = GetId("animalId");
+            int num = GetId();
 
             using (connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand("SELECT [Name] FROM tblAnimals WHERE [animalId] = @Id;", connection))
@@ -180,7 +178,7 @@ namespace DBSPCA
 
         private void button2_Click(object sender, EventArgs e)
         {
-            int changeNum = GetId("animalId");
+            int changeNum = GetId();
 
             using (connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand("UPDATE TblAnimals SET DoB = @petDoB WHERE animalId = @Id", connection))
@@ -196,7 +194,7 @@ namespace DBSPCA
 
         private void button3_Click(object sender, EventArgs e)
         {
-            int changeNum = GetId("animalId");
+            int changeNum = GetId();
 
             using (connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand("UPDATE TblAnimals SET Type = @petType WHERE animalId = @Id", connection))

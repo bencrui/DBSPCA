@@ -27,7 +27,9 @@ namespace DBSPCA
 
         private void FormGraph(int Id)
         {
-            string query = "SELECT tblFeed.Consumption FROM tblFeed INNER JOIN tblAnimals ON tblFeed.FeedId = tblAnimals.animalId WHERE tblAnimals.animalId = @Id";
+            yValues.Clear();
+
+            string query = "SELECT tblFeed.Consumption FROM tblFeed INNER JOIN tblAnimals ON tblFeed.AnimalId = tblAnimals.animalId WHERE tblAnimals.animalId = @Id";
 
             using (connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand(query, connection))
@@ -44,15 +46,17 @@ namespace DBSPCA
                 foreach (DataRow row in foodTable.Rows)
                 {
                     DataPoint Dp = new DataPoint();
-                    Dp.SetValueY(Convert.ToInt32(row["Consumption"]));
+                    Dp.SetValueY(Convert.ToInt32(row["Consumption"].ToString()));
                     yValues.Add(Dp);
-                    Console.WriteLine(Convert.ToInt32(row["Consumption"]));
                 }
             }
 
             // adding points, sorting series names, and making it a line
             miniChart.Series.Clear();
+            miniChart.ChartAreas.Clear();
+            miniChart.ChartAreas.Add("Food");
             miniChart.Series.Add("Food");
+            miniChart.Series["Food"].Points.Clear();
             miniChart.Series["Food"].MarkerStyle = MarkerStyle.Circle;
             foreach (DataPoint dP in yValues)
                 miniChart.Series["Food"].Points.Add(dP);
@@ -70,13 +74,20 @@ namespace DBSPCA
 
                 command.Parameters.AddWithValue("@animalId", animalId);
                 command.Parameters.AddWithValue("@Date", DateTime.Today);
-                command.Parameters.AddWithValue("@Consumption", Day1Nud.Value + Day2Nud.Value + Day3Nud.Value + Day4Nud.Value + Day5Nud.Value + Day6Nud.Value + Day7Nud.Value);
+                command.Parameters.AddWithValue("@Consumption", Convert.ToInt32(Day1Nud.Value) + Convert.ToInt32(Day2Nud.Value) + Convert.ToInt32(Day3Nud.Value) + Convert.ToInt32(Day4Nud.Value) + Convert.ToInt32(Day5Nud.Value) + Convert.ToInt32(Day6Nud.Value) + Convert.ToInt32(Day7Nud.Value));
 
                 command.ExecuteNonQuery();
                 connection.Close();
             }
-
             FormGraph(animalId);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            PetForm window = new PetForm();
+            window.FormClosed += (s, args) => this.Close();
+            window.Show();
         }
     }
 }
