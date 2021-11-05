@@ -29,10 +29,10 @@ namespace DBSPCA
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title5 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title4 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.lblDay7 = new System.Windows.Forms.Label();
             this.lblDay2 = new System.Windows.Forms.Label();
             this.lblDay3 = new System.Windows.Forms.Label();
@@ -135,18 +135,18 @@ namespace DBSPCA
             // 
             this.MainTitleTxb.AutoSize = true;
             this.MainTitleTxb.Font = new System.Drawing.Font("Palatino Linotype", 24F);
-            this.MainTitleTxb.Location = new System.Drawing.Point(243, 31);
+            this.MainTitleTxb.Location = new System.Drawing.Point(196, 27);
             this.MainTitleTxb.Name = "MainTitleTxb";
-            this.MainTitleTxb.Size = new System.Drawing.Size(332, 44);
+            this.MainTitleTxb.Size = new System.Drawing.Size(380, 44);
             this.MainTitleTxb.TabIndex = 17;
-            this.MainTitleTxb.Text = "NAME\'s Weekly Food";
+            this.MainTitleTxb.Text = "NAME\'s Weekly Food (g)";
             // 
             // Day7Nud
             // 
             this.Day7Nud.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.Day7Nud.Location = new System.Drawing.Point(165, 335);
             this.Day7Nud.Maximum = new decimal(new int[] {
-            20000,
+            15000,
             0,
             0,
             0});
@@ -159,7 +159,7 @@ namespace DBSPCA
             this.Day6Nud.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.Day6Nud.Location = new System.Drawing.Point(165, 297);
             this.Day6Nud.Maximum = new decimal(new int[] {
-            20000,
+            15000,
             0,
             0,
             0});
@@ -172,7 +172,7 @@ namespace DBSPCA
             this.Day5Nud.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.Day5Nud.Location = new System.Drawing.Point(165, 259);
             this.Day5Nud.Maximum = new decimal(new int[] {
-            20000,
+            15000,
             0,
             0,
             0});
@@ -185,7 +185,7 @@ namespace DBSPCA
             this.Day4Nud.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.Day4Nud.Location = new System.Drawing.Point(165, 222);
             this.Day4Nud.Maximum = new decimal(new int[] {
-            20000,
+            15000,
             0,
             0,
             0});
@@ -198,7 +198,7 @@ namespace DBSPCA
             this.Day3Nud.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.Day3Nud.Location = new System.Drawing.Point(165, 184);
             this.Day3Nud.Maximum = new decimal(new int[] {
-            20000,
+            15000,
             0,
             0,
             0});
@@ -211,7 +211,7 @@ namespace DBSPCA
             this.Day2Nud.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.Day2Nud.Location = new System.Drawing.Point(165, 146);
             this.Day2Nud.Maximum = new decimal(new int[] {
-            20000,
+            15000,
             0,
             0,
             0});
@@ -224,7 +224,7 @@ namespace DBSPCA
             this.Day1Nud.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.Day1Nud.Location = new System.Drawing.Point(165, 110);
             this.Day1Nud.Maximum = new decimal(new int[] {
-            20000,
+            15000,
             0,
             0,
             0});
@@ -234,48 +234,52 @@ namespace DBSPCA
             // 
             // miniChart
             // 
-            chartArea5.Name = "ChartArea1";
-            this.miniChart.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.miniChart.Legends.Add(legend5);
+            chartArea4.Name = "ChartArea1";
+            this.miniChart.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            this.miniChart.Legends.Add(legend4);
             this.miniChart.Location = new System.Drawing.Point(432, 109);
             this.miniChart.Name = "miniChart";
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series5.Legend = "Legend1";
-            series5.Name = "Food";
-            this.miniChart.Series.Add(series5);
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series4.Legend = "Legend1";
+            series4.Name = "Food";
+            this.miniChart.Series.Add(series4);
             this.miniChart.Size = new System.Drawing.Size(323, 253);
             this.miniChart.TabIndex = 27;
-            title5.Name = "Food";
-            this.miniChart.Titles.Add(title5);
+            title4.Name = "Food";
+            this.miniChart.Titles.Add(title4);
             // 
             // btnAdd
             // 
+            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(115)))), ((int)(((byte)(131)))));
             this.btnAdd.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Bold);
             this.btnAdd.Location = new System.Drawing.Point(238, 370);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(98, 23);
             this.btnAdd.TabIndex = 28;
             this.btnAdd.Text = "Add Food";
-            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // button1
             // 
+            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
             this.button1.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Bold);
+            this.button1.ForeColor = System.Drawing.Color.White;
             this.button1.Location = new System.Drawing.Point(657, 370);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(98, 23);
             this.button1.TabIndex = 30;
             this.button1.Text = "Exit";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // FoodForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(223)))), ((int)(((byte)(203)))));
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnAdd);
@@ -297,6 +301,7 @@ namespace DBSPCA
             this.Controls.Add(this.lblDay1);
             this.Name = "FoodForm";
             this.Text = "FoodForm";
+            this.Load += new System.EventHandler(this.FoodForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.Day7Nud)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Day6Nud)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Day5Nud)).EndInit();

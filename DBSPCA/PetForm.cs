@@ -10,7 +10,9 @@ namespace DBSPCA
     {
         SqlConnection connection;
         string connectionString;
-
+        bool ableToChange = false;
+        bool ableToAdd = true;
+        bool changeBool = true;
         public PetForm()
         {
             connectionString = ConfigurationManager.ConnectionStrings["DBSPCA.Properties.Settings.PetsConnectionString"].ConnectionString;
@@ -43,21 +45,26 @@ namespace DBSPCA
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            DateTime dobString = dtpBirth.Value;
-
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand("INSERT INTO tblAnimals([Name], [Type] ,[DoB]) Values(@petName, @petType, @petDoB)", connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+            if (changeBool && !txbName.Text.Equals(""))
             {
-                connection.Open();
-                command.Parameters.AddWithValue("@petName", txbName.Text);
-                command.Parameters.AddWithValue("@petType", typeDpD.GetItemText(typeDpD.SelectedItem));
-                command.Parameters.AddWithValue("@petDoB", dtpBirth.Value.ToString("MM/dd/yyyy"));
+                DateTime dobString = dtpBirth.Value;
 
-                command.ExecuteNonQuery();
-                connection.Close();
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("INSERT INTO tblAnimals([Name], [Type] ,[DoB]) Values(@petName, @petType, @petDoB)", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    connection.Open();
+                    command.Parameters.AddWithValue("@petName", txbName.Text);
+                    command.Parameters.AddWithValue("@petType", typeDpD.GetItemText(typeDpD.SelectedItem));
+                    command.Parameters.AddWithValue("@petDoB", dtpBirth.Value.ToString("MM/dd/yyyy"));
+
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+                PopulateConnection();
+
+                MessageBox.Show("Pet Successfully Added", "Success!", MessageBoxButtons.OK);
             }
-            PopulateConnection();
         }
 
         private void FillTypeTable()
@@ -72,31 +79,50 @@ namespace DBSPCA
                 typeDpD.ValueMember = "Type";
                 typeDpD.DataSource = typeTable;
             }
+            using (connection = new SqlConnection(connectionString))
+            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblTypes", connection))
+            {
+                DataTable typeTable = new DataTable();
+                adapter.Fill(typeTable);
+                DataRow all = typeTable.NewRow();
+                all["Type"] = "All";
+                typeTable.Rows.Add(all);
+
+                typeSearch.DisplayMember = "Type";
+                typeSearch.ValueMember = "Type";
+                typeSearch.DataSource = typeTable;
+            }
         }
 
         private void btnFoodPg_Click(object sender, EventArgs e)
         {
-            // go to food form page
-            this.Hide();
-            FoodForm window = new FoodForm(petList.GetItemText(petList.SelectedItem), GetId()); // create and run the full graph
-            window.FormClosed += (s, args) => this.Close();
-            window.Show();
+            if (changeBool)
+            {
+                // go to food form page
+                this.Hide();
+                FoodForm window = new FoodForm(petList.GetItemText(petList.SelectedItem), GetId()); // create and run the full graph
+                window.FormClosed += (s, args) => this.Close();
+                window.Show();
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int changeNum = GetId();
-
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand("UPDATE TblAnimals SET Name = @petName WHERE animalId = @Id", connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+            if (ableToAdd && changeBool)
             {
-                connection.Open();
-                command.Parameters.AddWithValue("@petName", txbName.Text);
-                command.Parameters.AddWithValue("@Id", changeNum);
-                command.ExecuteNonQuery();
+                int changeNum = GetId();
+
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("UPDATE TblAnimals SET Name = @petName WHERE animalId = @Id", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    connection.Open();
+                    command.Parameters.AddWithValue("@petName", txbName.Text);
+                    command.Parameters.AddWithValue("@Id", changeNum);
+                    command.ExecuteNonQuery();
+                }
+                PopulateConnection();
             }
-            PopulateConnection();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
@@ -125,7 +151,7 @@ namespace DBSPCA
                 DataTable petTable = new DataTable();
                 adapter.Fill(petTable);
 
-                // Get the index of the deleted animal
+                // Get the index of the animal
                 num = Convert.ToInt32(petTable.Rows[petList.SelectedIndex]["animalId"].ToString());
             }
 
@@ -174,38 +200,259 @@ namespace DBSPCA
 
                 dtpBirth.Text = nameTable.Rows[0]["DoB"].ToString();
             }
+
+            string type = "";
+
+            using (connection = new SqlConnection(connectionString))
+            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblAnimals", connection))
+            {
+                DataTable petTable = new DataTable();
+                adapter.Fill(petTable);
+
+                type = petTable.Rows[petList.SelectedIndex]["Type"].ToString();
+            }
+
+            using (connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand("SELECT [FoodCost] FROM tblTypes WHERE Type = @Type", connection))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@Type", type);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+                priceNuD.Value = Convert.ToInt32(dt.Rows[0]["FoodCost"].ToString());
+            }
+
+            using (connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand("SELECT [FoodWeight] FROM tblTypes WHERE Type = @Type", connection))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@Type", type);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+                weightNuD.Value = Convert.ToInt32(dt.Rows[0]["FoodWeight"].ToString());
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            int changeNum = GetId();
+            if (changeBool)
+            {
+                int changeNum = GetId();
+
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("UPDATE TblAnimals SET DoB = @petDoB WHERE animalId = @Id", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    connection.Open();
+                    command.Parameters.AddWithValue("@petDoB", dtpBirth.Value.ToString("MM/dd/yyyy"));
+                    command.Parameters.AddWithValue("@Id", changeNum);
+                    command.ExecuteNonQuery();
+                }
+                PopulateConnection();
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+            if (ableToChange)
+            {
+                string type = typeDpD.Text;
+
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("UPDATE TblTypes SET FoodCost = @TypeCost WHERE Type = @Type", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    connection.Open();
+                    command.Parameters.AddWithValue("@TypeCost", priceNuD.Value);
+                    command.Parameters.AddWithValue("@Type", type);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (ableToChange)
+            {
+                string type = typeDpD.Text;
+
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("UPDATE TblTypes SET FoodWeight = @TypeWeight WHERE Type = @Type", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    connection.Open();
+                    command.Parameters.AddWithValue("@TypeWeight", weightNuD.Value);
+                    command.Parameters.AddWithValue("@Type", type);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void typeDpD_TextChanged(object sender, EventArgs e)
+        {
+            bool alreadyAdded = false;
 
             using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand("UPDATE TblAnimals SET DoB = @petDoB WHERE animalId = @Id", connection))
+            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblTypes", connection))
+            {
+                DataTable typeTable = new DataTable();
+                adapter.Fill(typeTable);
+
+                foreach (DataRow row in typeTable.Rows)
+                {
+                    if (typeDpD.Text == row["Type"].ToString())
+                    {
+                        alreadyAdded = true;
+                        break;
+                    }
+                }
+            }
+            if (!alreadyAdded)
+            {
+                button5.Text = "";
+                button6.Text = "";
+                ableToChange = false;
+                button4.Text = "Add Type";
+            }
+            else
+            {
+                button5.Text = "Change Details";
+                button6.Text = "Change Details";
+                ableToChange = true;
+                button4.Text = "";
+            }
+        }
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            if (!ableToChange)
+            {
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("INSERT INTO tblTypes([Type], [FoodCost] ,[FoodWeight]) Values(@type, @cost, @weight)", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    connection.Open();
+                    command.Parameters.AddWithValue("@type", typeDpD.Text);
+                    command.Parameters.AddWithValue("@cost", priceNuD.Value);
+                    command.Parameters.AddWithValue("@weight", weightNuD.Value);
+                    command.ExecuteNonQuery();
+                }
+                FillTypeTable();
+
+                MessageBox.Show("Type Successfully Added", "Success!", MessageBoxButtons.OK);
+            }
+        }
+
+        private void typeDpD_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string type = typeDpD.Text;
+
+            using (connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand("SELECT [FoodCost] FROM tblTypes WHERE Type = @Type", connection))
             using (SqlDataAdapter adapter = new SqlDataAdapter(command))
             {
                 connection.Open();
-                command.Parameters.AddWithValue("@petDoB", dtpBirth.Value.ToString("MM/dd/yyyy"));
-                command.Parameters.AddWithValue("@Id", changeNum);
-                command.ExecuteNonQuery();
+                command.Parameters.AddWithValue("@Type", type);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+                priceNuD.Value = Convert.ToInt32(dt.Rows[0]["FoodCost"].ToString());
             }
-            PopulateConnection();
+
+            using (connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand("SELECT [FoodWeight] FROM tblTypes WHERE Type = @Type", connection))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@Type", type);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+                weightNuD.Value = Convert.ToInt32(dt.Rows[0]["FoodWeight"].ToString());
+            }
+        }
+
+        private void searchBtn_Click(object sender, EventArgs e)
+        {
+            using (connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals WHERE Name LIKE (@search+'%');", connection))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+            {
+                command.Parameters.AddWithValue("@search", nameSearch.Text);
+
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+
+                petList.DisplayMember = "Name";
+                petList.ValueMember = "Name";
+                petList.DataSource = dt;
+            }
+
+            if (petList.Items.Count == 0)
+            {
+                button1.Text = "";
+                button2.Text = "";
+                btnAdd.Text = "";
+                btnFoodPg.Text = "";
+                changeBool = false;
+            }
+            else
+            {
+                button1.Text = "Change Details";
+                button2.Text = "Change Details";
+                btnAdd.Text = "Add Animal";
+                btnAdd.Text = "Add Animal";
+                btnFoodPg.Text = "Food Details";
+                changeBool = true;
+            }
+        }
+
+        private void txbName_TextChanged(object sender, EventArgs e)
+        {
+            if (txbName.Text.Equals(""))
+            {
+                button1.Text = "";
+                btnAdd.Text = "";
+            }
+            else
+            {
+                btnAdd.Text = "Add Animal";
+                button1.Text = "Change Details";
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            int changeNum = GetId();
-
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand("UPDATE TblAnimals SET Type = @petType WHERE animalId = @Id", connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+            if (typeSearch.Text.Equals("All"))
             {
-                connection.Open();
-                command.Parameters.AddWithValue("@petType", typeDpD.GetItemText(typeDpD.SelectedItem));
-                command.Parameters.AddWithValue("@Id", changeNum);
-                command.ExecuteNonQuery();
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals;", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    petList.DisplayMember = "Name";
+                    petList.ValueMember = "Name";
+                    petList.DataSource = dt;
+                }
             }
-            PopulateConnection();
+            else
+            {
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals WHERE Type LIKE @search;", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    command.Parameters.AddWithValue("@search", typeSearch.Text);
+
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    petList.DisplayMember = "Name";
+                    petList.ValueMember = "Name";
+                    petList.DataSource = dt;
+                }
+            }
         }
     }
 }

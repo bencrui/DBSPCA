@@ -987,6 +987,10 @@ namespace DBSPCA {
             
             private global::System.Data.DataColumn columnType;
             
+            private global::System.Data.DataColumn columnFoodCost;
+            
+            private global::System.Data.DataColumn columnFoodWeight;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public tblTypesDataTable() {
@@ -1030,6 +1034,22 @@ namespace DBSPCA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn FoodCostColumn {
+                get {
+                    return this.columnFoodCost;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn FoodWeightColumn {
+                get {
+                    return this.columnFoodWeight;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1065,10 +1085,12 @@ namespace DBSPCA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public tblTypesRow AddtblTypesRow(string Type) {
+            public tblTypesRow AddtblTypesRow(string Type, string FoodCost, string FoodWeight) {
                 tblTypesRow rowtblTypesRow = ((tblTypesRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        Type};
+                        Type,
+                        FoodCost,
+                        FoodWeight};
                 rowtblTypesRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowtblTypesRow);
                 return rowtblTypesRow;
@@ -1099,6 +1121,8 @@ namespace DBSPCA {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             internal void InitVars() {
                 this.columnType = base.Columns["Type"];
+                this.columnFoodCost = base.Columns["FoodCost"];
+                this.columnFoodWeight = base.Columns["FoodWeight"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1106,11 +1130,19 @@ namespace DBSPCA {
             private void InitClass() {
                 this.columnType = new global::System.Data.DataColumn("Type", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnType);
+                this.columnFoodCost = new global::System.Data.DataColumn("FoodCost", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnFoodCost);
+                this.columnFoodWeight = new global::System.Data.DataColumn("FoodWeight", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnFoodWeight);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnType}, true));
                 this.columnType.AllowDBNull = false;
                 this.columnType.Unique = true;
                 this.columnType.MaxLength = 20;
+                this.columnFoodCost.AllowDBNull = false;
+                this.columnFoodCost.MaxLength = 10;
+                this.columnFoodWeight.AllowDBNull = false;
+                this.columnFoodWeight.MaxLength = 10;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1410,6 +1442,28 @@ namespace DBSPCA {
                 }
                 set {
                     this[this.tabletblTypes.TypeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string FoodCost {
+                get {
+                    return ((string)(this[this.tabletblTypes.FoodCostColumn]));
+                }
+                set {
+                    this[this.tabletblTypes.FoodCostColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string FoodWeight {
+                get {
+                    return ((string)(this[this.tabletblTypes.FoodWeightColumn]));
+                }
+                set {
+                    this[this.tabletblTypes.FoodWeightColumn] = value;
                 }
             }
             
@@ -2326,25 +2380,37 @@ SELECT animalId, Name, Type, DoB FROM tblAnimals WHERE (animalId = @animalId)";
             tableMapping.SourceTable = "Table";
             tableMapping.DataSetTable = "tblTypes";
             tableMapping.ColumnMappings.Add("Type", "Type");
+            tableMapping.ColumnMappings.Add("FoodCost", "FoodCost");
+            tableMapping.ColumnMappings.Add("FoodWeight", "FoodWeight");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = "DELETE FROM [dbo].[tblTypes] WHERE (([Type] = @Original_Type))";
+            this._adapter.DeleteCommand.CommandText = "DELETE FROM [dbo].[tblTypes] WHERE (([Type] = @Original_Type) AND ([FoodCost] = @" +
+                "Original_FoodCost) AND ([FoodWeight] = @Original_FoodWeight))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Type", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Type", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_FoodCost", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FoodCost", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_FoodWeight", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FoodWeight", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[tblTypes] ([Type]) VALUES (@Type);\r\nSELECT Type FROM tblTypes " +
-                "WHERE (Type = @Type)";
+            this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[tblTypes] ([Type], [FoodCost], [FoodWeight]) VALUES (@Type, @F" +
+                "oodCost, @FoodWeight);\r\nSELECT Type, FoodCost, FoodWeight FROM tblTypes WHERE (T" +
+                "ype = @Type)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Type", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Type", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FoodCost", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FoodCost", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FoodWeight", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FoodWeight", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = "UPDATE [dbo].[tblTypes] SET [Type] = @Type WHERE (([Type] = @Original_Type));\r\nSE" +
-                "LECT Type FROM tblTypes WHERE (Type = @Type)";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[tblTypes] SET [Type] = @Type, [FoodCost] = @FoodCost, [FoodWeight] = @FoodWeight WHERE (([Type] = @Original_Type) AND ([FoodCost] = @Original_FoodCost) AND ([FoodWeight] = @Original_FoodWeight));
+SELECT Type, FoodCost, FoodWeight FROM tblTypes WHERE (Type = @Type)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Type", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Type", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FoodCost", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FoodCost", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FoodWeight", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FoodWeight", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Type", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Type", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_FoodCost", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FoodCost", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_FoodWeight", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FoodWeight", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2360,7 +2426,7 @@ SELECT animalId, Name, Type, DoB FROM tblAnimals WHERE (animalId = @animalId)";
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT Type FROM dbo.tblTypes";
+            this._commandCollection[0].CommandText = "SELECT Type, FoodCost, FoodWeight FROM dbo.tblTypes";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -2421,12 +2487,24 @@ SELECT animalId, Name, Type, DoB FROM tblAnimals WHERE (animalId = @animalId)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(string Original_Type) {
+        public virtual int Delete(string Original_Type, string Original_FoodCost, string Original_FoodWeight) {
             if ((Original_Type == null)) {
                 throw new global::System.ArgumentNullException("Original_Type");
             }
             else {
                 this.Adapter.DeleteCommand.Parameters[0].Value = ((string)(Original_Type));
+            }
+            if ((Original_FoodCost == null)) {
+                throw new global::System.ArgumentNullException("Original_FoodCost");
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[1].Value = ((string)(Original_FoodCost));
+            }
+            if ((Original_FoodWeight == null)) {
+                throw new global::System.ArgumentNullException("Original_FoodWeight");
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[2].Value = ((string)(Original_FoodWeight));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -2448,12 +2526,24 @@ SELECT animalId, Name, Type, DoB FROM tblAnimals WHERE (animalId = @animalId)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(string Type) {
+        public virtual int Insert(string Type, string FoodCost, string FoodWeight) {
             if ((Type == null)) {
                 throw new global::System.ArgumentNullException("Type");
             }
             else {
                 this.Adapter.InsertCommand.Parameters[0].Value = ((string)(Type));
+            }
+            if ((FoodCost == null)) {
+                throw new global::System.ArgumentNullException("FoodCost");
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[1].Value = ((string)(FoodCost));
+            }
+            if ((FoodWeight == null)) {
+                throw new global::System.ArgumentNullException("FoodWeight");
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[2].Value = ((string)(FoodWeight));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -2475,18 +2565,42 @@ SELECT animalId, Name, Type, DoB FROM tblAnimals WHERE (animalId = @animalId)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(string Type, string Original_Type) {
+        public virtual int Update(string Type, string FoodCost, string FoodWeight, string Original_Type, string Original_FoodCost, string Original_FoodWeight) {
             if ((Type == null)) {
                 throw new global::System.ArgumentNullException("Type");
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[0].Value = ((string)(Type));
             }
+            if ((FoodCost == null)) {
+                throw new global::System.ArgumentNullException("FoodCost");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[1].Value = ((string)(FoodCost));
+            }
+            if ((FoodWeight == null)) {
+                throw new global::System.ArgumentNullException("FoodWeight");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[2].Value = ((string)(FoodWeight));
+            }
             if ((Original_Type == null)) {
                 throw new global::System.ArgumentNullException("Original_Type");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[1].Value = ((string)(Original_Type));
+                this.Adapter.UpdateCommand.Parameters[3].Value = ((string)(Original_Type));
+            }
+            if ((Original_FoodCost == null)) {
+                throw new global::System.ArgumentNullException("Original_FoodCost");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[4].Value = ((string)(Original_FoodCost));
+            }
+            if ((Original_FoodWeight == null)) {
+                throw new global::System.ArgumentNullException("Original_FoodWeight");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[5].Value = ((string)(Original_FoodWeight));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -2508,8 +2622,8 @@ SELECT animalId, Name, Type, DoB FROM tblAnimals WHERE (animalId = @animalId)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(string Original_Type) {
-            return this.Update(Original_Type, Original_Type);
+        public virtual int Update(string FoodCost, string FoodWeight, string Original_Type, string Original_FoodCost, string Original_FoodWeight) {
+            return this.Update(Original_Type, FoodCost, FoodWeight, Original_Type, Original_FoodCost, Original_FoodWeight);
         }
     }
     
