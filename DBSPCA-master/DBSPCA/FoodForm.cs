@@ -91,7 +91,7 @@ namespace DBSPCA
 
                 confirmFeeding = MessageBox.Show("Confirm Feeding: " + "\nTotal food consumed: " + (Convert.ToInt32(Day1Nud.Value) + Convert.ToInt32(Day2Nud.Value) + Convert.ToInt32(Day3Nud.Value) + Convert.ToInt32(Day4Nud.Value) + Convert.ToInt32(Day5Nud.Value) + Convert.ToInt32(Day6Nud.Value) + Convert.ToInt32(Day7Nud.Value)) +
                                                  "g\nTotal weekly cost: $" + (Convert.ToDecimal(dt.Rows[0]["FoodCost"].ToString())/Convert.ToInt32(dt.Rows[0]["FoodWeight"].ToString()) * ((Convert.ToInt32(Day1Nud.Value) + Convert.ToInt32(Day2Nud.Value) + Convert.ToInt32(Day3Nud.Value) + Convert.ToInt32(Day4Nud.Value) + Convert.ToInt32(Day5Nud.Value) + Convert.ToInt32(Day6Nud.Value) + Convert.ToInt32(Day7Nud.Value)))).ToString("n0"), "Store Food?", MessageBoxButtons.OKCancel);
-            
+                Console.WriteLine(Convert.ToDecimal(dt.Rows[0]["FoodCost"].ToString()) / Convert.ToInt32(dt.Rows[0]["FoodWeight"].ToString()));
             
             
             }

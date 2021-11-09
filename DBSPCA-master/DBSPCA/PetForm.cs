@@ -12,6 +12,9 @@ namespace DBSPCA
         string connectionString;
         bool TChange = false;
         bool AChange = true;
+        bool alreadyAdded = false;
+        string searching = "";
+        string typeSearching = "";
         public PetForm()
         {
             connectionString = ConfigurationManager.ConnectionStrings["DBSPCA.Properties.Settings.PetsConnectionString"].ConnectionString;
@@ -23,6 +26,7 @@ namespace DBSPCA
         {
             PopulateConnection();
             FillTypeTable();
+            RefilVars();
 
             if (petList.Items.Count == 0)
             {
@@ -50,8 +54,37 @@ namespace DBSPCA
                 petList.ValueMember = "Name";
                 petList.DataSource = petTable;
             }
+            searching = "";
+            typeSearching = "";
+            RefilVars();
         }
 
+        private void FillTypeTable()
+        {
+            using (connection = new SqlConnection(connectionString))
+            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblTypes ORDER BY Type", connection))
+            {
+                DataTable typeTable = new DataTable();
+                adapter.Fill(typeTable);
+
+                typeDpD.DisplayMember = "Type";
+                typeDpD.ValueMember = "Type";
+                typeDpD.DataSource = typeTable;
+            }
+            using (connection = new SqlConnection(connectionString))
+            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblTypes ORDER BY Type", connection))
+            {
+                DataTable typeTable = new DataTable();
+                adapter.Fill(typeTable);
+                DataRow all = typeTable.NewRow();
+                all["Type"] = "All";
+                typeTable.Rows.Add(all);
+
+                typeSearch.DisplayMember = "Type";
+                typeSearch.ValueMember = "Type";
+                typeSearch.DataSource = typeTable;
+            }
+        }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
@@ -60,7 +93,7 @@ namespace DBSPCA
                 DateTime dobString = dtpBirth.Value;
 
                 using (connection = new SqlConnection(connectionString))
-                using (SqlCommand command = new SqlCommand("INSERT INTO tblAnimals([Name], [Type] ,[DoB]) Values('"+txbName.Text+"', '"+typeDpD.Text+"', '"+dtpBirth.Value.ToString("MM/dd/yyyy")+"')", connection))
+                using (SqlCommand command = new SqlCommand("INSERT INTO tblAnimals([Name], [Type] ,[DoB]) Values('" + txbName.Text + "', '" + typeDpD.Text + "', '" + dtpBirth.Value.ToString("MM/dd/yyyy") + "')", connection))
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
                     connection.Open();
@@ -72,33 +105,6 @@ namespace DBSPCA
                 PopulateConnection();
 
                 MessageBox.Show("Pet Successfully Added", "Success!", MessageBoxButtons.OK);
-            }
-        }
-
-        private void FillTypeTable()
-        {
-            using (connection = new SqlConnection(connectionString))
-            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblTypes", connection))
-            {
-                DataTable typeTable = new DataTable();
-                adapter.Fill(typeTable);
-
-                typeDpD.DisplayMember = "Type";
-                typeDpD.ValueMember = "Type";
-                typeDpD.DataSource = typeTable;
-            }
-            using (connection = new SqlConnection(connectionString))
-            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblTypes", connection))
-            {
-                DataTable typeTable = new DataTable();
-                adapter.Fill(typeTable);
-                DataRow all = typeTable.NewRow();
-                all["Type"] = "All";
-                typeTable.Rows.Add(all);
-
-                typeSearch.DisplayMember = "Type";
-                typeSearch.ValueMember = "Type";
-                typeSearch.DataSource = typeTable;
             }
         }
 
@@ -149,9 +155,16 @@ namespace DBSPCA
 
                     command.ExecuteNonQuery();
                 }
-                PopulateConnection();
+
+                if (searching == "" && typeSearching == "")
+                    PopulateConnection();
+                else if (searching == "")
+                    SearchType();
+                else
+                    SearchName();
                 MessageBox.Show("Pet Successfully Deleted", "Success!", MessageBoxButtons.OK);
             }
+            RefilVars();
             AChangeCheck();
         }
 
@@ -159,98 +172,127 @@ namespace DBSPCA
         {
             int num = 0;
 
-            using (connection = new SqlConnection(connectionString))
-            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblAnimals ORDER BY Name", connection))
+            if (petList.Items.Count == 0)
+            { }
+            else if (typeSearching.Equals(""))
             {
-                DataTable petTable = new DataTable();
-                adapter.Fill(petTable);
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals WHERE Name LIKE (@search+'%') ORDER BY Name", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    command.Parameters.AddWithValue("@search", searching);
+                    DataTable petTable = new DataTable();
+                    adapter.Fill(petTable);
 
-                // Get the index of the animal
-                num = Convert.ToInt32(petTable.Rows[petList.SelectedIndex]["animalId"].ToString());
+                    // Get the index of the animal
+                    num = Convert.ToInt32(petTable.Rows[petList.SelectedIndex]["animalId"].ToString());
+                }
+            }
+            else
+            {
+                try
+                {
+                    using (connection = new SqlConnection(connectionString))
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals WHERE Name LIKE (@search+'%') AND Type LIKE (@typeSearch) ORDER BY Name", connection))
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                    {
+                        command.Parameters.AddWithValue("@search", searching);
+                        command.Parameters.AddWithValue("@typeSearch", typeSearching);
+                        DataTable petTable = new DataTable();
+                        adapter.Fill(petTable);
+
+                        // Get the index of the animal
+                        num = Convert.ToInt32(petTable.Rows[petList.SelectedIndex]["animalId"].ToString());
+                    }
+                }
+                catch(Exception e)
+                {
+                    num = 0;
+                }
             }
 
             return num;
         }
 
+        private string GetT()
+        {
+            try
+            {
+                string type = "";
+
+                using (connection = new SqlConnection(connectionString))
+                using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblTypes ORDER BY Type", connection))
+                {
+                    DataTable petTable = new DataTable();
+                    adapter.Fill(petTable);
+
+                    // Get the index of the animal
+                    type = petTable.Rows[typeDpD.SelectedIndex]["Type"].ToString();
+                }
+
+                return type;
+            }
+            catch (Exception)
+            {
+                return typeDpD.Text;
+            }
+        }
+
         private void petList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int num = GetId();
-
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand("SELECT [Name] FROM tblAnimals WHERE [animalId] = @Id;", connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-            {
-                connection.Open();
-                command.Parameters.AddWithValue("@Id", num);
-
-                DataTable nameTable = new DataTable();
-                adapter.Fill(nameTable);
-
-                txbName.Text = nameTable.Rows[0]["Name"].ToString();
-            }
-
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand("SELECT [Type] FROM tblAnimals WHERE [animalId] = @Id;", connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-            {
-                connection.Open();
-                command.Parameters.AddWithValue("@Id", num);
-
-                DataTable nameTable = new DataTable();
-                adapter.Fill(nameTable);
-
-                typeDpD.Text = nameTable.Rows[0]["Type"].ToString();
-            }
-
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand("SELECT [DoB] FROM tblAnimals WHERE [animalId] = @Id;", connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-            {
-                connection.Open();
-                command.Parameters.AddWithValue("@Id", num);
-
-                DataTable nameTable = new DataTable();
-                adapter.Fill(nameTable);
-
-                dtpBirth.Text = nameTable.Rows[0]["DoB"].ToString();
-            }
-
-            string type = "";
-
-            using (connection = new SqlConnection(connectionString))
-            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblAnimals", connection))
-            {
-                DataTable petTable = new DataTable();
-                adapter.Fill(petTable);
-
-                type = petTable.Rows[petList.SelectedIndex]["Type"].ToString();
-            }
-
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand("SELECT [FoodCost] FROM tblTypes WHERE Type = @Type", connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-            {
-                connection.Open();
-                command.Parameters.AddWithValue("@Type", type);
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
-                priceNuD.Value = Convert.ToInt32(dt.Rows[0]["FoodCost"].ToString());
-            }
-
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand("SELECT [FoodWeight] FROM tblTypes WHERE Type = @Type", connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-            {
-                connection.Open();
-                command.Parameters.AddWithValue("@Type", type);
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
-                weightNuD.Value = Convert.ToInt32(dt.Rows[0]["FoodWeight"].ToString());
-            }
+            RefilVars();
 
             AChangeCheck();
         }
 
+        private void RefilVars()
+        {
+            txbName.Text = StringGathering("Name");
+            typeDpD.Text = StringGathering("Type");
+            dtpBirth.Text = StringGathering("DoB");
+            priceNuD.Value = IntGathering("FoodCost");
+            weightNuD.Value = IntGathering("FoodWeight");
+        }
+
+        private string StringGathering(string selecType)
+        {
+            try
+            {
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("SELECT [" + selecType + "] FROM tblAnimals WHERE [animalId] = @Id;", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    connection.Open();
+                    command.Parameters.AddWithValue("@Id", GetId());
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    return dt.Rows[0][selecType].ToString();
+                }
+            }
+            catch
+            { return ""; }
+        }
+        private int IntGathering(string selecType)
+        {
+            try
+            {
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand("SELECT [" + selecType + "] FROM tblTypes WHERE [Type] = @Type;", connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    connection.Open();
+                    command.Parameters.AddWithValue("@Type", GetT());
+
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    return Convert.ToInt32(dt.Rows[0][selecType].ToString());
+                }
+            }
+            catch
+            { return 0; }
+        }
         private void button2_Click(object sender, EventArgs e)
         {
             if (AChange)
@@ -335,14 +377,13 @@ namespace DBSPCA
 
         private void typeDpD_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string type = typeDpD.Text;
 
             using (connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand("SELECT [FoodCost] FROM tblTypes WHERE Type = @Type", connection))
             using (SqlDataAdapter adapter = new SqlDataAdapter(command))
             {
                 connection.Open();
-                command.Parameters.AddWithValue("@Type", type);
+                command.Parameters.AddWithValue("@Type", GetT());
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
                 priceNuD.Value = Convert.ToInt32(dt.Rows[0]["FoodCost"].ToString());
@@ -353,20 +394,29 @@ namespace DBSPCA
             using (SqlDataAdapter adapter = new SqlDataAdapter(command))
             {
                 connection.Open();
-                command.Parameters.AddWithValue("@Type", type);
+                command.Parameters.AddWithValue("@Type", GetT());
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
                 weightNuD.Value = Convert.ToInt32(dt.Rows[0]["FoodWeight"].ToString());
             }
+
+            TChangeCheck();
         }
 
         private void searchBtn_Click(object sender, EventArgs e)
         {
+            SearchName();
+        }
+        private void SearchName()
+        {
+
+            searching = nameSearch.Text;
+            typeSearching = "";
             using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals WHERE Name LIKE (@search+'%');", connection))
+            using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals WHERE Name LIKE (@search+'%') ORDER BY Name;", connection))
             using (SqlDataAdapter adapter = new SqlDataAdapter(command))
             {
-                command.Parameters.AddWithValue("@search", nameSearch.Text);
+                command.Parameters.AddWithValue("@search", searching);
 
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
@@ -376,6 +426,7 @@ namespace DBSPCA
                 petList.DataSource = dt;
             }
 
+            RefilVars();
             AChangeCheck();
         }
 
@@ -384,7 +435,6 @@ namespace DBSPCA
             if (txbName.Text.Equals(""))
             {
                 NChangeBtn.Text = "";
-                BChangeBtn.Text = "";
                 AAddBtn.Text = "";
             }
             else if (!txbName.Text.Equals("") && AChange)
@@ -392,6 +442,11 @@ namespace DBSPCA
                 NChangeBtn.Text = "Change Details";
                 BChangeBtn.Text = "Change Details";
             }
+            if (AChange)
+            {
+                BChangeBtn.Text.Equals("Change Details");
+            }
+
             if (!txbName.Text.Equals("")&&!typeDpD.Text.Equals(""))
                 AAddBtn.Text = "Add Animal";
             else
@@ -400,10 +455,15 @@ namespace DBSPCA
 
         private void button3_Click(object sender, EventArgs e)
         {
+            SearchType();
+        }
+        private void SearchType()
+        {
+            searching = "";
             if (typeSearch.Text.Equals("All"))
             {
                 using (connection = new SqlConnection(connectionString))
-                using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals;", connection))
+                using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals ORDER BY Name;", connection))
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
                     DataTable dt = new DataTable();
@@ -413,14 +473,17 @@ namespace DBSPCA
                     petList.ValueMember = "Name";
                     petList.DataSource = dt;
                 }
+                typeSearching = "";
             }
             else
             {
+                typeSearching = typeSearch.Text;
+
                 using (connection = new SqlConnection(connectionString))
-                using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals WHERE Type LIKE @search;", connection))
+                using (SqlCommand command = new SqlCommand("SELECT * FROM tblAnimals WHERE Type LIKE @search ORDER BY Name;", connection))
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
-                    command.Parameters.AddWithValue("@search", typeSearch.Text);
+                    command.Parameters.AddWithValue("@search", typeSearching);
 
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
@@ -430,6 +493,7 @@ namespace DBSPCA
                     petList.DataSource = dt;
                 }
             }
+            RefilVars();
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -494,15 +558,15 @@ namespace DBSPCA
                 }
             }
 
+            RefilVars();
             TChangeCheck();
         }
 
         private void TChangeCheck()
         {
-            bool alreadyAdded = false;
-
+            alreadyAdded = false;
             using (connection = new SqlConnection(connectionString))
-            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblTypes", connection))
+            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM tblTypes ORDER BY Type", connection))
             {
                 DataTable typeTable = new DataTable();
                 adapter.Fill(typeTable);
@@ -523,7 +587,6 @@ namespace DBSPCA
                 TDeleteBtn.Text = "";
                 TChange = false;
                 AAddBtn.Text = "";
-                TAddBtn.Text = "Add Type";
             }
             else
             {
@@ -533,9 +596,9 @@ namespace DBSPCA
                 if (!txbName.Text.Equals("") && !typeDpD.Text.Equals(""))
                     AAddBtn.Text = "Add Animal";
                 TChange = true;
-                TAddBtn.Text = "";
             }
-            if (typeDpD.Text.Equals("") || weightNuD.Value == 0 || priceNuD.Value == 0)
+
+            if (typeDpD.Text.Equals("") || weightNuD.Value == 0 || priceNuD.Value == 0 || alreadyAdded)
                 TAddBtn.Text = "";
             else
                 TAddBtn.Text = "Add Type";
@@ -562,7 +625,17 @@ namespace DBSPCA
 
         private void priceNuD_ValueChanged(object sender, EventArgs e)
         {
-            if (typeDpD.Text.Equals("") || weightNuD.Value == 0 || priceNuD.Value == 0)
+            TChangeCheck();
+            if (typeDpD.Text.Equals("") || weightNuD.Value == 0 || priceNuD.Value == 0 || alreadyAdded)
+                TAddBtn.Text = "";
+            else
+                TAddBtn.Text = "Add Type";
+        }
+
+        private void weightNuD_ValueChanged(object sender, EventArgs e)
+        {
+            TChangeCheck();
+            if (typeDpD.Text.Equals("") || weightNuD.Value == 0 || priceNuD.Value == 0 || alreadyAdded)
                 TAddBtn.Text = "";
             else
                 TAddBtn.Text = "Add Type";

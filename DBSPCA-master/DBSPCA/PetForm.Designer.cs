@@ -245,6 +245,7 @@ namespace DBSPCA
             this.weightNuD.Name = "weightNuD";
             this.weightNuD.Size = new System.Drawing.Size(109, 20);
             this.weightNuD.TabIndex = 45;
+            this.weightNuD.ValueChanged += new System.EventHandler(this.weightNuD_ValueChanged);
             // 
             // priceNuD
             // 
