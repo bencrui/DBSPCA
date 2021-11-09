@@ -1,0 +1,13 @@
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\bin\Debug\Pets.mdf
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\bin\Debug\Pets_log.ldf
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\obj\Debug\DBSPCA.csprojAssemblyReference.cache
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\obj\Debug\DBSPCA.FoodForm.resources
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\obj\Debug\DBSPCA.PetForm.resources
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\obj\Debug\DBSPCA.Properties.Resources.resources
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\obj\Debug\DBSPCA.csproj.GenerateResource.cache
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\obj\Debug\DBSPCA.csproj.CoreCompileInputs.cache
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\obj\Debug\DBSPCA.exe
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\obj\Debug\DBSPCA.pdb
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\bin\Debug\DBSPCA.exe.config
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\bin\Debug\DBSPCA.exe
+C:\Users\Ben\Downloads\DBSPCA-master\DBSPCA-master\DBSPCA\bin\Debug\DBSPCA.pdb
